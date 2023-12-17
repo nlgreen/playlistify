@@ -1,12 +1,16 @@
 const {all} = require("express/lib/application");
 
 async function getAllUserPlaylists(spotify, meId, allowedPlaylists, offset = 0, limit = 50) {
-    let playlists = [];
+    let playlists = {};
     while (true) {
         const response = await spotify.getUserPlaylists(meId, options={offset, limit});
         response.body.items.forEach(playlist => {
-            if (allowedPlaylists.size === 0 || allowedPlaylists.has(playlist.name)) {
-                playlists.push({'name': playlist.name, 'id':playlist.id})
+            //todo : remove first statement
+            if (allowedPlaylists.has(playlist.name)) {
+                if (playlist.name in playlists) {
+                    throw new Error(`Can't add playlist ${playlist.name} as it is a duplicate`)
+                }
+                playlists[playlist.name] = playlist.id
             }
         });
         if (!response.body.next) {

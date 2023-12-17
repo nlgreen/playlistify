@@ -3,6 +3,18 @@ import PlaylistContainer from "./PlaylistContainer";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
+const track = {
+    name: "",
+    album: {
+        images: [
+            { url: "" }
+        ]
+    },
+    artists: [
+        { name: "" }
+    ]
+}
+
 function WebPlayback(props) {
 
     const [is_paused, setPaused] = useState(false);
@@ -70,7 +82,7 @@ function WebPlayback(props) {
                         }
                         return response.text()
                     }).then(songName => {
-                        toast.success(`Added ${songName} to queue!`, {
+                        toast.success(`Added ${songName} to queue`, {
                             position: "top-right",
                             autoClose: 5000,
                             hideProgressBar: true,
@@ -137,6 +149,7 @@ function WebPlayback(props) {
                     <PlaylistContainer playlists={props.playlists}
                                        usedPlaylists={usedPlaylists}
                                        setUsedPlaylists={setUsedPlaylistsRef}
+                                       playlistConfig={props.playlistConfig}
                                        currentTrackRef={currentTrackRef} />
                 </div>
             </>

@@ -8,6 +8,7 @@ function PlaylistContainer(props) {
     const usedPlaylists = props.usedPlaylists;
     const setUsedPlaylists = props.setUsedPlaylists;
     const currentTrackRef = props.currentTrackRef;
+    const playlistConfig = props.playlistConfig;
 
     return (
         <div className="main-wrapper">
@@ -23,6 +24,7 @@ function PlaylistContainer(props) {
                                 <PlaylistTab playlists={playlist.playlists}
                                              usedPlaylists={usedPlaylists}
                                              setUsedPlaylists={setUsedPlaylists}
+                                             playlistConfig={playlistConfig}
                                              currentTrackRef={currentTrackRef} />
                             </TabPanel>
                         ))}

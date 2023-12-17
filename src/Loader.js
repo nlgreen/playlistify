@@ -20,15 +20,27 @@ const Loader = (props) => {
     }
 
     const handleClick = async () => {
-        setLoadingMessage("Fetching Playlist Songs...");
+        let playlistCount = 0;
+        setLoadingMessage(`Fetching Songs from Playlists...(${playlistCount}/${props.playlists.length})`);
         try {
-            let response = await fetch('/api/playlistSongs?allowedPlaylists=' + JSON.stringify(props.playlists));
+            let allPlaylistSongs = new Set()
+            let response = await fetch('/api/playlistConfig?allowedPlaylists=' + JSON.stringify(props.playlists));
 
-            const playlistSongs = await response.json();
-            toastMessage(`Found ${playlistSongs.length} playlist songs`)
+            const playlistConfig = await response.json();
+            props.setPlaylistConfig(playlistConfig)
+            for (const playlist of props.playlists) {
+                playlistCount += 1
+                setLoadingMessage(`Fetching Songs from Playlists...(${playlistCount}/${props.playlists.length})`);
+                const playlistSongsResponse = await fetch('/api/playlistSongs?playlistId=' + playlistConfig[playlist])
+                const playlistSongs = await playlistSongsResponse.json()
+                playlistSongs.forEach(item => allPlaylistSongs.add(item))
+            }
+            allPlaylistSongs = Array.from(allPlaylistSongs);
+
+            toastMessage(`Found ${allPlaylistSongs.length} playlist songs`)
 
             setLoadingMessage("Fetching Liked Songs...");
-            const newResponse = await fetch('/api/songsToProcess?playlistSongs=' + JSON.stringify(playlistSongs))
+            const newResponse = await fetch('/api/songsToProcess?playlistSongs=' + JSON.stringify(allPlaylistSongs))
             const songsToProcess = await newResponse.json()
 
             toastMessage(`Found ${songsToProcess.length} songs to process`)

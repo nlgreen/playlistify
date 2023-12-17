@@ -10,9 +10,10 @@ This answer used for multi-github account setup: https://stackoverflow.com/a/934
 - Only add to playlist if not in playlist
 - Add scrubber, or skip button
 - Display configuration of playlists from get go
+  - Modifiable through UX?
 - External configuration
 - Graceful shutdown
 - Refactoring and cleanup
 - Lower left hand corner for queue
-
-
+- Better error handling
+- paginate song loading api so the progress bar can be more fine grained

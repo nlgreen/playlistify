@@ -11,8 +11,9 @@ app.get('/auth/token', auth.token)
 
 app.get('/api/queue', backend.queue)
 app.get('/api/addToPlaylist', backend.addToPlaylist)
-app.get('/api/playlistSongs', backend.playlistSongs)
+app.get('/api/playlistConfig', backend.playlistConfig)
 app.get('/api/songsToProcess', backend.songsToProcess)
+app.get('/api/playlistSongs', backend.playlistSongs)
 
 app.listen(port, () => {
   console.log(`Listening at http://localhost:${port}`)

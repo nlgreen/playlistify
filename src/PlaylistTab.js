@@ -1,11 +1,11 @@
 import React from 'react';
-import {TabPanel} from "react-tabs";
 
-function PlaylistContainer(props) {
+function PlaylistTab(props) {
     const playlists = props.playlists;
     const usedPlaylists = props.usedPlaylists;
     const setUsedPlaylists = props.setUsedPlaylists;
     const currentTrackRef = props.currentTrackRef;
+    const playlistConfig = props.playlistConfig
 
     const addToPlaylist = (playlistName) => {
         // have to copy the array to force a new reference so that child will rerender
@@ -16,7 +16,7 @@ function PlaylistContainer(props) {
     };
 
     const addToPlaylistBackendAPI = (playlistName) => {
-        fetch(`/api/addToPlaylist?songId=${currentTrackRef.current.id}&playlistName=${playlistName}`);
+        fetch(`/api/addToPlaylist?songId=${currentTrackRef.current.id}&playlistName=${playlistName}&playlistId=${playlistConfig[playlistName]}`);
     };
 
     return (
@@ -34,5 +34,5 @@ function PlaylistContainer(props) {
     );
 }
 
-export default PlaylistContainer;
+export default PlaylistTab;
 

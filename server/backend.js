@@ -19,24 +19,20 @@ function setDifference(a, b) {
     return new Set(Array.from(a).filter(item => !b.has(item)));
 }
 
-async function getPlaylistSongs(spotify, allowedPlaylists) {
+function init() {
+    if (!spotify.getAccessToken()) {
+        spotify.setAccessToken(auth.bare_token.token)
+    }
+}
+
+async function getPlaylistConfig(spotify, allowedPlaylists) {
     let meId = await spotify.getMe();
     meId = meId.body.id
     const playlists = await service.getAllUserPlaylists(spotify, meId, allowedPlaylists);
-    console.log(JSON.stringify(playlists))
-    console.log(JSON.stringify(Array.from(allowedPlaylists)))
-    console.log(playlists.length)
-    console.log(allowedPlaylists.size)
-    if (playlists.length !== allowedPlaylists.size) {
+    if (Object.keys(playlists).length !== allowedPlaylists.size) {
         throw new Error("Not all playlists could be found");
     }
-    const playlistSongs = new Set();
-
-    for (const playlist of playlists) {
-        const tmpSongs = await service.getAllPlaylistSongs(spotify, playlist.id);
-        tmpSongs.forEach(item => playlistSongs.add(item))
-    }
-    return Array.from(playlistSongs)
+    return playlists;
 }
 
 async function getSongsToProcess(spotify, playlistSongs) {
@@ -48,19 +44,8 @@ async function getSongsToProcess(spotify, playlistSongs) {
     return songsToProcess;
 }
 
-async function getPlaylistByName(spotify, playlistName) {
-    let meId = await spotify.getMe();
-    meId = meId.body.id
-    const playlists = await service.getAllUserPlaylists(spotify, meId, new Set());
-    for (const playlist of playlists) {
-        if (playlist.name === playlistName) {
-            return playlist.id;
-        }
-    }
-    throw new Error("Playlist not found! " + playlistName)
-}
-
 exports.queue = async function(req, res) {
+    init()
     const songId = req.query.songId;
     await service.addToQueue(spotify, songId)
     const songName = await service.getSongName(spotify, songId);
@@ -68,25 +53,33 @@ exports.queue = async function(req, res) {
     res.send(songName)
 }
 
-//todo : only add if not present in playlist
 exports.addToPlaylist = async function(req, res) {
+    init()
     const songId = req.query.songId;
     const songName = await service.getSongName(spotify, songId);
     const playlistName = req.query.playlistName;
-    const playlistId = await getPlaylistByName(spotify, playlistName);
+    const playlistId = req.query.playlistId;
     await service.addToPlaylist(spotify, playlistId, songId);
     console.log("added " + songName + " to " + playlistName);
 }
 
-exports.playlistSongs = async function(req, res) {
-    spotify.setAccessToken(auth.bare_token.token);
+exports.playlistConfig = async function(req, res) {
+    init()
     const allowedPlaylistList = JSON.parse(req.query.allowedPlaylists);
     const allowedPlaylists = new Set(allowedPlaylistList);
-    res.json(await getPlaylistSongs(spotify, allowedPlaylists));
+    res.json(await getPlaylistConfig(spotify, allowedPlaylists));
 }
 
 exports.songsToProcess = async function(req, res) {
+    init()
     const playlistSongs = JSON.parse(req.query.playlistSongs);
     const songsToProcess = await getSongsToProcess(spotify, playlistSongs)
     res.json(songsToProcess);
+}
+
+exports.playlistSongs = async function(req, res) {
+    init()
+    const playlistId = req.query.playlistId
+    const playlistSongs = await service.getAllPlaylistSongs(spotify, playlistId)
+    res.json(playlistSongs)
 }
