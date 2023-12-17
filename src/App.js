@@ -6,6 +6,7 @@ import './App.css';
 import {ToastContainer} from "react-toastify";
 
 const ALLOWED_PLAYLISTS = ["Afrobeats", "Biking", "Brass", "Build Up", "Bumpy", "Chillax (Electric)", "Chillax (Quiet)", "Chillax (Relax)", "Country", "Dance Free", "Download", "Duet", "Favorites", "Feel It", "Folky", "Foreign", "Funky", "Go Hard", "Happy", "Hip Hop", "House-Electric Party", "Instrumental", "Jazz", "Light Rap", "Not Love", "NoPlaylist", "Pop (Boy)", "Pop (Gen)", "Pop (Girl)", "Pump Up", "Rap", "RnB Style", "Road Trip", "Rock (Misc)", "Singalong", "Summer", "Vibe", "Whistle"];
+// const ALLOWED_PLAYLISTS = ["Tmp1", "Tmp2"]
 
 const STATIC_PLAYLISTS = [
   { "name": "Positive Energy", "playlists": ["Bumpy", "Dance Free", "Go Hard", "Happy", "House-Electric Party", "Pop (Boy)", "Pop (Gen)", "Pop (Girl)", "Singalong", "Summer", "Vibe"] },

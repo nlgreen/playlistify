@@ -36,24 +36,29 @@ async function getAllPlaylistSongs(spotify, playlistId, offset= 0, limit = 50) {
     return songs;
 }
 
-async function getAllLikedSongs(spotify, offset = 0, limit = 50) {
+async function getLikedSongs(spotify, offset = 0, limit = 200) {
     let songs = []
-    while (true) {
-        if (offset % 250 === 0) {
-            console.log("iteration " + offset)
-        }
-        const response = await spotify.getMySavedTracks(options={offset, limit});
+    let count = 0
+    let complete = false;
+    let total = 0;
+    while (count < limit) {
+        const response = await spotify.getMySavedTracks(options = {offset, limit: 50});
+        total = response.body.total
         response.body.items.forEach(song => {
             songs.push(song.track.id);
         })
         // for testing
-        // if (offset === 250) break;
+        // if (offset > 250){
+        // break; complete = true;
+        // }
         if (!response.body.next) {
+            complete = true;
             break;
         }
-        offset += limit;
+        offset += 50;
+        count += 50;
     }
-    return songs;
+    return {songs, offset, complete, total};
 }
 
 async function addToPlaylist(spotify, playlistId, songId) {
@@ -75,7 +80,7 @@ async function getSongName(spotify, songId) {
 
 module.exports = { getAllUserPlaylists,
     getAllPlaylistSongs,
-    getAllLikedSongs,
+    getLikedSongs,
     addToPlaylist,
     addToQueue,
     getSongName};

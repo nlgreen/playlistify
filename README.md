@@ -2,6 +2,7 @@
 `npm run dev` starts the React frontend on port 3000 and the express backend on port 5000.
 
 This answer used for multi-github account setup: https://stackoverflow.com/a/9348040
+(Make sure both accounts are listed via `ssh-add -l`, and use `ssh-add <rsa_file>` to add if not)
 
 ## To Do
 - Clear queue on startup
@@ -16,4 +17,4 @@ This answer used for multi-github account setup: https://stackoverflow.com/a/934
 - Refactoring and cleanup
 - Lower left hand corner for queue
 - Better error handling
-- paginate song loading api so the progress bar can be more fine grained
+- linting

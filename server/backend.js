@@ -35,15 +35,6 @@ async function getPlaylistConfig(spotify, allowedPlaylists) {
     return playlists;
 }
 
-async function getSongsToProcess(spotify, playlistSongs) {
-    let likedSongs = await service.getAllLikedSongs(spotify);
-    likedSongs = new Set(likedSongs);
-
-    const songsToProcess = Array.from(setDifference(likedSongs, new Set(playlistSongs)));
-    shuffle(songsToProcess);
-    return songsToProcess;
-}
-
 exports.queue = async function(req, res) {
     init()
     const songId = req.query.songId;
@@ -70,11 +61,10 @@ exports.playlistConfig = async function(req, res) {
     res.json(await getPlaylistConfig(spotify, allowedPlaylists));
 }
 
-exports.songsToProcess = async function(req, res) {
+exports.likedSongs = async function(req, res) {
     init()
-    const playlistSongs = JSON.parse(req.query.playlistSongs);
-    const songsToProcess = await getSongsToProcess(spotify, playlistSongs)
-    res.json(songsToProcess);
+    const likedSongs = await service.getLikedSongs(spotify, parseInt(req.query.offset));
+    res.json(likedSongs);
 }
 
 exports.playlistSongs = async function(req, res) {
