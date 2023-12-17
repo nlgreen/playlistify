@@ -1,16 +1,7 @@
 import React, { useState, useEffect } from 'react';
-
-const track = {
-    name: "",
-    album: {
-        images: [
-            { url: "" }
-        ]
-    },
-    artists: [
-        { name: "" }
-    ]
-}
+import PlaylistContainer from "./PlaylistContainer";
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function WebPlayback(props) {
 
@@ -18,6 +9,28 @@ function WebPlayback(props) {
     const [is_active, setActive] = useState(false);
     const [player, setPlayer] = useState(undefined);
     const [current_track, setTrack] = useState(track);
+    const [songIndex, setSongIndex] = useState(0);
+    const [usedPlaylists, setUsedPlaylists] = useState([])
+
+    // the listener will never update with the initial (empty) track state,
+    /// so use this to get a reference to it that updates instead
+    const currentTrackRef = React.useRef(current_track);
+    const setCurrentTrackRef = data => {
+        currentTrackRef.current = data;
+        setTrack(data);
+    };
+
+    const songIndexRef = React.useRef(songIndex);
+    const setSongIndexRef = data => {
+        songIndexRef.current = data;
+        setSongIndex(data);
+    };
+
+    const usedPlaylistsRef = React.useRef(usedPlaylists);
+    const setUsedPlaylistsRef = data => {
+        usedPlaylistsRef.current = data;
+        setUsedPlaylists(data);
+    };
 
     useEffect(() => {
 
@@ -46,12 +59,34 @@ function WebPlayback(props) {
             });
 
             player.addListener('player_state_changed', ( state => {
-
                 if (!state) {
                     return;
                 }
 
-                setTrack(state.track_window.current_track);
+                if (currentTrackRef.current.name && (currentTrackRef.current.name !== state.track_window.current_track.name)) {
+                    fetch('/api/queue?songId=' + props.songsToPlay[songIndexRef.current]).then((response) => {
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! Status: ${response.status}`);
+                        }
+                        return response.text()
+                    }).then(songName => {
+                        toast.success(`Added ${songName} to queue!`, {
+                            position: "top-right",
+                            autoClose: 5000,
+                            hideProgressBar: true,
+                            closeOnClick: true,
+                            pauseOnHover: true,
+                            draggable: true,
+                            progress: undefined,
+                            theme: "dark",
+                        });
+                    });
+                    setSongIndexRef(songIndexRef.current += 1)
+                    setUsedPlaylistsRef([])
+
+                }
+                setCurrentTrackRef(state.track_window.current_track);
+
                 setPaused(state.paused);
 
                 player.getCurrentState().then( state => { 
@@ -99,6 +134,10 @@ function WebPlayback(props) {
                             </button>
                         </div>
                     </div>
+                    <PlaylistContainer playlists={props.playlists}
+                                       usedPlaylists={usedPlaylists}
+                                       setUsedPlaylists={setUsedPlaylistsRef}
+                                       currentTrackRef={currentTrackRef} />
                 </div>
             </>
         );

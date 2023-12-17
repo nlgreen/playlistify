@@ -63,6 +63,7 @@ body {
   display: flex;
   justify-content: center;
   height: 100%;
+  flex-direction: column;
 }
 
 .main-container {
@@ -115,3 +116,40 @@ body {
 }
 
 img { background: transparent; }
+
+.playlist-buttons {
+  width: 80%;
+}
+
+.btn-playlist {
+  background-color: rgba(140, 182, 220, 0.33);
+  color: #fff;
+  border: none;
+  padding: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s ease;
+  margin: 10px;
+}
+.btn-disabled:disabled {
+  background-color: red;
+  color: #fff;
+  border: none;
+  padding: 10px;
+  border-radius: 5px;
+  font-size: 14px;
+  transition: background-color 0.3s ease;
+  cursor: not-allowed;
+  margin: 10px;
+
+
+}
+
+.btn-playlist:hover {
+  background-color: #2980b9;
+}
+
+.spacer {
+  margin-top: 20px;
+}
