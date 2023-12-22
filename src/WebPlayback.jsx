@@ -146,7 +146,7 @@ function WebPlayback(props) {
                             </button>
                         </div>
                     </div>
-                    <PlaylistContainer playlists={props.playlists}
+                    <PlaylistContainer playlistStructure={props.playlistStructure}
                                        usedPlaylists={usedPlaylists}
                                        setUsedPlaylists={setUsedPlaylistsRef}
                                        playlistConfig={props.playlistConfig}

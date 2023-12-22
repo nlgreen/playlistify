@@ -2,6 +2,7 @@ const service = require('./service')
 const auth = require("./auth");
 const SpotifyWebApi = require("spotify-web-api-node");
 const dotenv = require("dotenv");
+const JsonDataManager = require("./JsonDataManager");
 
 dotenv.config()
 
@@ -13,6 +14,9 @@ var spotify = new SpotifyWebApi({
     clientSecret: spotify_client_secret,
     redirectUri: 'http://www.example.com/callback'
 });
+
+const playlistManager = new JsonDataManager('./resources/playlist_names.json', JsonDataManager.PLAYLIST_NAMES)
+const playlistStructureManager = new JsonDataManager('./resources/playlist_structure.json', JsonDataManager.PLAYLIST_STRUCTURE)
 
 function init() {
     if (!spotify.getAccessToken()) {
@@ -54,7 +58,7 @@ exports.addToPlaylist = async function(req, res) {
 
 exports.playlistConfig = async function(req, res) {
     init()
-    const allowedPlaylistList = JSON.parse(req.query.allowedPlaylists);
+    const allowedPlaylistList = playlistManager.get();
     const allowedPlaylists = new Set(allowedPlaylistList);
     res.json(await getPlaylistConfig(spotify, allowedPlaylists));
 }
@@ -70,4 +74,10 @@ exports.playlistSongs = async function(req, res) {
     const playlistId = req.query.playlistId
     const playlistSongs = await service.getAllPlaylistSongs(spotify, playlistId)
     res.json(playlistSongs)
+}
+
+exports.playlistStructure = async function(req, res) {
+    init()
+    const playlistStructure = playlistStructureManager.get();
+    res.json(playlistStructure)
 }

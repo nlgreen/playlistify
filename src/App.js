@@ -1,28 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import WebPlayback from './WebPlayback'
 import Login from './Login'
 import Loader from './Loader'
 import './App.css';
 import {ToastContainer} from "react-toastify";
 
-const ALLOWED_PLAYLISTS = ["Afrobeats", "Biking", "Brass", "Build Up", "Bumpy", "Chillax (Electric)", "Chillax (Quiet)", "Chillax (Relax)", "Country", "Dance Free", "Download", "Duet", "Favorites", "Feel It", "Folky", "Foreign", "Funky", "Go Hard", "Happy", "Hip Hop", "House-Electric Party", "Instrumental", "Jazz", "Light Rap", "Not Love", "NoPlaylist", "Pop (Boy)", "Pop (Gen)", "Pop (Girl)", "Pump Up", "Rap", "RnB Style", "Road Trip", "Rock (Misc)", "Singalong", "Summer", "Vibe", "Whistle"];
-// const ALLOWED_PLAYLISTS = ["Tmp1", "Tmp2"]
-
-const STATIC_PLAYLISTS = [
-  { "name": "Positive Energy", "playlists": ["Bumpy", "Dance Free", "Go Hard", "Happy", "House-Electric Party", "Pop (Boy)", "Pop (Gen)", "Pop (Girl)", "Singalong", "Summer", "Vibe"] },
-  { "name": "Instrumentation", "playlists": ["Brass", "Instrumental", "Whistle"] },
-  { "name": "Genre", "playlists": ["Afrobeats", "Chillax (Electric)", "Country", "Folky", "Funky", "Hip Hop", "House-Electric Party", "Jazz", "Light Rap", "Pop (Boy)", "Pop (Gen)", "Pop (Girl)", "RnB Style", "Rap", "Rock (Misc)"] },
-  { "name": "Activity", "playlists": ["Biking", "Dance Free", "Go Hard", "Not Love", "Pump Up", "Road Trip", "Singalong"] },
-  { "name": "Composition", "playlists": ["Build Up", "Duet", "Foreign"] },
-  { "name": "Lowkey", "playlists": ["Chillax (Quiet)", "Chillax (Relax)", "Feel It", "Folky", "Jazz"] },
-  { "name": "Misc", "playlists": ["Download", "Favorites", "NoPlaylist"] }
-]
 function App() {
 
   const [token, setToken] = useState('');
   const [state, setState] = useState('UNAUTHENTICATED')
   const [songsToPlay, setSongsToPlay] = useState([])
   const [playlistConfig, setPlaylistConfig] = useState({})
+  const [playlistStructure, setPlaylistStructure] = useState([])
 
     async function getToken() {
       const response = await fetch('/auth/token');
@@ -40,13 +29,13 @@ function App() {
     } else if (state === 'LOAD') {
       innerContent = <Loader setSongsToPlay={setSongsToPlay}
                              setState={setState}
-                             playlists={ALLOWED_PLAYLISTS}
-                             setPlaylistConfig={setPlaylistConfig}/>
+                             setPlaylistConfig={setPlaylistConfig}
+                             setPlaylistStructure={setPlaylistStructure}/>
     } else {
       innerContent = <WebPlayback token={token}
                                   songsToPlay={songsToPlay}
                                   playlistConfig={playlistConfig}
-                                  playlists={STATIC_PLAYLISTS}/>
+                                  playlistStructure={playlistStructure}/>
     }
     return (
         <>

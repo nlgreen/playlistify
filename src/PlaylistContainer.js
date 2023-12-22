@@ -4,7 +4,7 @@ import 'react-tabs/style/react-tabs.css';
 import PlaylistTab from "./PlaylistTab";
 
 function PlaylistContainer(props) {
-    const playlists = props.playlists;
+    const playlistStructure = props.playlistStructure;
     const usedPlaylists = props.usedPlaylists;
     const setUsedPlaylists = props.setUsedPlaylists;
     const currentTrackRef = props.currentTrackRef;
@@ -15,13 +15,13 @@ function PlaylistContainer(props) {
             <div className="playlist-buttons">
                 <Tabs>
                     <TabList>
-                        {playlists.map((playlist) => (
-                            <Tab key={playlist.name}>{playlist.name}</Tab>
+                        {playlistStructure.map((playlistCategory) => (
+                            <Tab key={playlistCategory.name}>{playlistCategory.name}</Tab>
                         ))}
                     </TabList>
-                        {playlists.map((playlist) => (
-                            <TabPanel key={playlist.name + '-panel'}>
-                                <PlaylistTab playlists={playlist.playlists}
+                        {playlistStructure.map((playlistCategory) => (
+                            <TabPanel key={playlistCategory.name + '-panel'}>
+                                <PlaylistTab playlists={playlistCategory.playlists}
                                              usedPlaylists={usedPlaylists}
                                              setUsedPlaylists={setUsedPlaylists}
                                              playlistConfig={playlistConfig}
