@@ -1,5 +1,4 @@
 const service = require('./service')
-var shuffle = require('shuffle-array')
 const auth = require("./auth");
 const SpotifyWebApi = require("spotify-web-api-node");
 const dotenv = require("dotenv");
@@ -14,10 +13,6 @@ var spotify = new SpotifyWebApi({
     clientSecret: spotify_client_secret,
     redirectUri: 'http://www.example.com/callback'
 });
-
-function setDifference(a, b) {
-    return new Set(Array.from(a).filter(item => !b.has(item)));
-}
 
 function init() {
     if (!spotify.getAccessToken()) {
@@ -50,8 +45,11 @@ exports.addToPlaylist = async function(req, res) {
     const songName = await service.getSongName(spotify, songId);
     const playlistName = req.query.playlistName;
     const playlistId = req.query.playlistId;
-    await service.addToPlaylist(spotify, playlistId, songId);
-    console.log("added " + songName + " to " + playlistName);
+    const success = await service.addToPlaylist(spotify, playlistId, songId);
+    if (success) {
+        console.log("Added " + songName + " to " + playlistName);
+    }
+    res.json(success)
 }
 
 exports.playlistConfig = async function(req, res) {

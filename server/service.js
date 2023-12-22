@@ -1,5 +1,3 @@
-const {all} = require("express/lib/application");
-
 async function getAllUserPlaylists(spotify, meId, allowedPlaylists, offset = 0, limit = 50) {
     let playlists = {};
     while (true) {
@@ -62,10 +60,13 @@ async function getLikedSongs(spotify, offset = 0, limit = 200) {
 }
 
 async function addToPlaylist(spotify, playlistId, songId) {
-    console.log(playlistId)
-    console.log(songId)
     const songUri = `spotify:track:${songId}`
+    const playlistSongs = await getAllPlaylistSongs(spotify, playlistId);
+    if (playlistSongs.includes(songId)) {
+        return false;
+    }
     await spotify.addTracksToPlaylist(playlistId, [songUri])
+    return true;
 }
 
 async function addToQueue(spotify, songId) {

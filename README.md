@@ -5,10 +5,12 @@ This answer used for multi-github account setup: https://stackoverflow.com/a/934
 (Make sure both accounts are listed via `ssh-add -l`, and use `ssh-add <rsa_file>` to add if not)
 
 ## To Do
+### Queue (Not supported by spotify api)
+- see if the web api has a queue remove function it uses from browser
 - Clear queue on startup
   - Or alert queue size
 - Don't add to queue unless size is 0/1
-- Only add to playlist if not in playlist
+### Other
 - Add scrubber, or skip button
 - Display configuration of playlists from get go
   - Modifiable through UX?
@@ -18,3 +20,5 @@ This answer used for multi-github account setup: https://stackoverflow.com/a/934
 - Lower left hand corner for queue
 - Better error handling
 - linting
+- skip initial spotify button
+- add dev mode that makes loading faster
