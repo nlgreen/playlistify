@@ -6,7 +6,6 @@ const fs = require('fs');
 
 // then render with https://www.npmjs.com/package/react-json-view
 class JsonDataManager {
-  static PLAYLIST_NAMES = 'PLAYLIST_NAMES';
   static PLAYLIST_STRUCTURE = 'PLAYLIST_STRUCTURE';
 
   constructor(fileLocation, fileType) {

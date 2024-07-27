@@ -10,15 +10,26 @@ This answer used for multi-github account setup: https://stackoverflow.com/a/934
 - Clear queue on startup
   - Or alert queue size
 - Don't add to queue unless size is 0/1
-### Other
-- Add scrubber, or skip button
+### Refactoring
+- separate validations file
+- test leaving tab and coming back
+- linting
+- General refactoring and cleanup
+- change GET to POST where appropriate (and general REST improvements of api)
+- move toast to common util
+
+### Performance
+- Better error handling
+- add dev mode that makes loading faster
+- Graceful shutdown
+
+### Features
+- Add scrubber, or skip ahead button
 - Display configuration of playlists from get go
   - Modifiable through UX?
 - External configuration
-- Graceful shutdown
-- Refactoring and cleanup
 - Lower left hand corner for queue
-- Better error handling
-- linting
 - skip initial spotify button
-- add dev mode that makes loading faster
+- verify that song is in playlist after adding
+- Migrate system to use a single "processed" playlist instead of sifting through all of them to determine the state
+

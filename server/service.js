@@ -3,9 +3,8 @@ async function getAllUserPlaylists(spotify, meId, allowedPlaylists, offset = 0, 
     while (true) {
         const response = await spotify.getUserPlaylists(meId, options={offset, limit});
         response.body.items.forEach(playlist => {
-            //todo : remove first statement
             if (allowedPlaylists.has(playlist.name)) {
-                if (playlist.name in playlists) {
+                if (playlist.name in playlists && playlist.id !== playlists[playlist.name]) {
                     throw new Error(`Can't add playlist ${playlist.name} as it is a duplicate`)
                 }
                 playlists[playlist.name] = playlist.id
@@ -71,6 +70,9 @@ async function addToPlaylist(spotify, playlistId, songId) {
 
 async function addToQueue(spotify, songId) {
     const songUri = `spotify:track:${songId}`
+    // some sort of race condition...without this, songs are often not actually added to the queue
+    // hopefully it doesn't affect other endpoints like adding songs?
+    await new Promise(r => setTimeout(r, 500));
     await spotify.addToQueue(songUri)
 }
 

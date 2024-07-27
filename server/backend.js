@@ -15,7 +15,6 @@ var spotify = new SpotifyWebApi({
     redirectUri: 'http://www.example.com/callback'
 });
 
-const playlistManager = new JsonDataManager('./resources/playlist_names.json', JsonDataManager.PLAYLIST_NAMES)
 const playlistStructureManager = new JsonDataManager('./resources/playlist_structure.json', JsonDataManager.PLAYLIST_STRUCTURE)
 
 function init() {
@@ -58,9 +57,13 @@ exports.addToPlaylist = async function(req, res) {
 
 exports.playlistConfig = async function(req, res) {
     init()
-    const allowedPlaylistList = playlistManager.get();
-    const allowedPlaylists = new Set(allowedPlaylistList);
-    res.json(await getPlaylistConfig(spotify, allowedPlaylists));
+    const playlistStructure = playlistStructureManager.get();
+    let uniquePlaylists = [];
+    playlistStructure.forEach(item => {
+        uniquePlaylists.push(...item.playlists);
+    });
+    uniquePlaylists = new Set(uniquePlaylists.sort());
+    res.json(await getPlaylistConfig(spotify, uniquePlaylists));
 }
 
 exports.likedSongs = async function(req, res) {

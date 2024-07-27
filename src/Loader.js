@@ -90,7 +90,7 @@ const Loader = (props) => {
     return (
         <div className="App">
             <header className="App-header">
-                {loadingMessage !== '' ? loader : <a className="btn-spotify" onClick={handleClick}>Let's Start Processing!</a>}
+                {loadingMessage !== '' ? loader : <a className="btn-spotify" onClick={handleClick}>Start Processing!</a>}
                 <div className="spacer">
                     {loadingMessage}
                 </div>
