@@ -1,40 +1,43 @@
 const fs = require('fs');
 
-// this doesn't work because fs doesn't exist in react, and also since react runs in the browser it
-// has no access to the file system. Move these functions to the backend (still not sure if fs will
-// work in express)
-
-// then render with https://www.npmjs.com/package/react-json-view
 class JsonDataManager {
   static PLAYLIST_NAMES = 'PLAYLIST_NAMES';
   static PLAYLIST_STRUCTURE = 'PLAYLIST_STRUCTURE';
 
-  constructor(fileLocation, fileType) {
-    this.fileLocation = fileLocation;
-    this.fileType = fileType;
+  constructor(playlistNamesFileLocation, playlistStructureFileLocation) {
+    this.playlistNamesFileLocation = playlistNamesFileLocation;
+    this.playlistStructureFileLocation = playlistStructureFileLocation;
 
-    console.log(`JsonDataManager created with file type: ${this.fileType}`);
+    console.log(`JsonDataManager created with file type: ${this.playlistNamesFileLocation}`);
   }
 
-  get() {
+  get(type) {
+    const fileLocation = this.getFileLocation(type)
     try {
-      const jsonData = JSON.parse(fs.readFileSync(`${this.fileLocation}`, 'utf-8'));
-      console.log(`Data loaded from ${this.fileLocation}: ${JSON.stringify(jsonData)}`);
+      const jsonData = JSON.parse(fs.readFileSync(`${fileLocation}`, 'utf-8'));
+      console.log(`Data loaded from ${fileLocation}: ${JSON.stringify(jsonData)}`);
       return jsonData;
     } catch (error) {
-      console.error(`Error loading data from ${this.fileLocation}: ${error.message}`);
+      console.error(`Error loading data from ${fileLocation}: ${error.message}`);
       throw error;
     }
   }
 
-  save(jsonBlob) {
+  save(jsonBlob, type) {
+    const fileLocation = this.getFileLocation(type)
     try {
-      fs.writeFileSync(`${this.fileLocation}`, JSON.stringify(jsonBlob, null, 2));
-      console.log(`Data saved to ${this.fileLocation}`);
+      fs.writeFileSync(`${fileLocation}`, JSON.stringify(jsonBlob, null, 2));
+      console.log(`Data saved to ${fileLocation}`);
     } catch (error) {
-      console.error(`Error saving data to ${this.fileLocation}: ${error.message}`);
+      console.error(`Error saving data to ${fileLocation}: ${error.message}`);
       throw error;
     }
+  }
+
+  getFileLocation(type) {
+    return type === JsonDataManager.PLAYLIST_NAMES ?
+        this.playlistNamesFileLocation :
+        this.playlistStructureFileLocation
   }
 }
 

@@ -15,6 +15,7 @@ app.get('/api/playlistConfig', backend.playlistConfig)
 app.get('/api/likedSongs', backend.likedSongs);
 app.get('/api/playlistSongs', backend.playlistSongs)
 app.get('/api/playlistStructure', backend.playlistStructure)
+app.get('/api/config', backend.saveConfig)
 
 app.listen(port, () => {
   console.log(`Listening at http://localhost:${port}`)

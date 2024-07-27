@@ -15,8 +15,7 @@ var spotify = new SpotifyWebApi({
     redirectUri: 'http://www.example.com/callback'
 });
 
-const playlistManager = new JsonDataManager('./resources/playlist_names.json', JsonDataManager.PLAYLIST_NAMES)
-const playlistStructureManager = new JsonDataManager('./resources/playlist_structure.json', JsonDataManager.PLAYLIST_STRUCTURE)
+const configManager = new JsonDataManager('./resources/playlist_names.json', './resources/playlist_structure.json')
 
 function init() {
     if (!spotify.getAccessToken()) {
@@ -29,7 +28,7 @@ async function getPlaylistConfig(spotify, allowedPlaylists) {
     meId = meId.body.id
     const playlists = await service.getAllUserPlaylists(spotify, meId, allowedPlaylists);
     if (Object.keys(playlists).length !== allowedPlaylists.size) {
-        throw new Error("Not all playlists could be found");
+        return {}
     }
     return playlists;
 }
@@ -58,7 +57,12 @@ exports.addToPlaylist = async function(req, res) {
 
 exports.playlistConfig = async function(req, res) {
     init()
-    const allowedPlaylistList = playlistManager.get();
+    let allowedPlaylistList = req.query.playlistNames
+    if (!allowedPlaylistList) {
+        allowedPlaylistList = configManager.get(JsonDataManager.PLAYLIST_NAMES);
+    } else {
+        allowedPlaylistList = JSON.parse(allowedPlaylistList)
+    }
     const allowedPlaylists = new Set(allowedPlaylistList);
     res.json(await getPlaylistConfig(spotify, allowedPlaylists));
 }
@@ -78,6 +82,14 @@ exports.playlistSongs = async function(req, res) {
 
 exports.playlistStructure = async function(req, res) {
     init()
-    const playlistStructure = playlistStructureManager.get();
+    const playlistStructure = configManager.get(JsonDataManager.PLAYLIST_STRUCTURE);
     res.json(playlistStructure)
+}
+
+exports.saveConfig = async function(req, res) {
+    init()
+    const configType = req.query.configType
+    const config = req.query.config
+    configManager.save(config, configType)
+    res.json(true)
 }

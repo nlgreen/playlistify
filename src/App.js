@@ -29,6 +29,8 @@ function App() {
     } else if (state === 'LOAD') {
       innerContent = <Loader setSongsToPlay={setSongsToPlay}
                              setState={setState}
+                             playlistConfig={playlistConfig}
+                             playlistStructure={playlistStructure}
                              setPlaylistConfig={setPlaylistConfig}
                              setPlaylistStructure={setPlaylistStructure}/>
     } else {
