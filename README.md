@@ -32,4 +32,7 @@ This answer used for multi-github account setup: https://stackoverflow.com/a/934
 - skip initial spotify button
 - verify that song is in playlist after adding
 - Migrate system to use a single "processed" playlist instead of sifting through all of them to determine the state
-
+- Song loading indicator on processed songs, like the liked songs has
+- Remove songs from playlist (if accidently clicked)
+- Token refreshing
+- Add a new playlist

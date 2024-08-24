@@ -58,21 +58,34 @@ async function getLikedSongs(spotify, offset = 0, limit = 200) {
     return {songs, offset, complete, total};
 }
 
-async function addToPlaylist(spotify, playlistId, songId) {
+async function removeFromLikedSongs(spotify, songId, songName) {
+    await spotify.removeFromMySavedTracks([songId])
+    console.log("Removed " + songName + " from liked songs");
+}
+
+async function addToPlaylist(spotify, playlistId, playlistName, songId, allowDuplicates) {
     const songUri = `spotify:track:${songId}`
-    const playlistSongs = await getAllPlaylistSongs(spotify, playlistId);
+    let playlistSongs = await getAllPlaylistSongs(spotify, playlistId);
     if (playlistSongs.includes(songId)) {
-        return false;
+        if (!allowDuplicates) {
+            return "Playlist " + playlistName + " already has song!";
+        }
+        return ""
     }
     await spotify.addTracksToPlaylist(playlistId, [songUri])
-    return true;
+    playlistSongs = await getAllPlaylistSongs(spotify, playlistId);
+    if (!playlistSongs.includes(songId)) {
+        return "Song was not successfully added to " + playlistName;
+    }
+    return "";
 }
 
 async function addToQueue(spotify, songId) {
     const songUri = `spotify:track:${songId}`
     // some sort of race condition...without this, songs are often not actually added to the queue
     // hopefully it doesn't affect other endpoints like adding songs?
-    await new Promise(r => setTimeout(r, 500));
+    //todo : fetch songs for playlist remotely after adding to confirm presence
+    await new Promise(r => setTimeout(r, 750));
     await spotify.addToQueue(songUri)
 }
 
@@ -86,4 +99,5 @@ module.exports = { getAllUserPlaylists,
     getLikedSongs,
     addToPlaylist,
     addToQueue,
-    getSongName};
+    getSongName,
+    removeFromLikedSongs};

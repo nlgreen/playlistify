@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import WebPlayback from './WebPlayback'
 import Login from './Login'
 import Loader from './Loader'
@@ -12,6 +12,10 @@ function App() {
   const [songsToPlay, setSongsToPlay] = useState([])
   const [playlistConfig, setPlaylistConfig] = useState({})
   const [playlistStructure, setPlaylistStructure] = useState([])
+
+    useEffect(() => {
+      document.title = "Playlistify"
+    }, []);
 
     async function getToken() {
       const response = await fetch('/auth/token');

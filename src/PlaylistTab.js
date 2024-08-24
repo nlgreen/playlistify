@@ -13,10 +13,10 @@ function PlaylistTab(props) {
         const newUsedPlaylists = [...usedPlaylists];
         newUsedPlaylists.push(playlistName)
         setUsedPlaylists(newUsedPlaylists);
-        const success = await addToPlaylistBackendAPI(playlistName);
-        if (!success) {
+        const message = await addToPlaylistBackendAPI(playlistName);
+        if (message !== '') {
             const song = currentTrackRef.current.name
-            toast.error(`Did not add ${song} to ${playlistName} because it's already there!`, {
+            toast.error(`Did not add ${song} to ${playlistName}: ${message}`, {
                 position: "top-right",
                 autoClose: 5000,
                 hideProgressBar: true,

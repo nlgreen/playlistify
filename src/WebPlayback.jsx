@@ -44,8 +44,22 @@ function WebPlayback(props) {
         setUsedPlaylists(data);
     };
 
-    useEffect(() => {
+    const removeFromLikedSongs = async () => {
+        const song = currentTrackRef.current.name
+        await fetch(`/api/removeFromLiked?songId=${currentTrackRef.current.id}&songName=${song}`);
+        toast.success(`Removed ${song} from liked songs`, {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: true,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "dark",
+        });
+    };
 
+    useEffect(() => {
         const script = document.createElement("script");
         script.src = "https://sdk.scdn.co/spotify-player.js";
         script.async = true;
@@ -143,6 +157,10 @@ function WebPlayback(props) {
 
                             <button className="btn-spotify" onClick={() => { player.nextTrack() }} >
                                 &gt;&gt;
+                            </button>
+
+                            <button className="btn-spotify btn-warning" onClick={() => { removeFromLikedSongs() }}>
+                                Remove
                             </button>
                         </div>
                     </div>

@@ -19,23 +19,13 @@ const Loader = (props) => {
         });
     }
 
-    const getAllPlaylistSongs = async () => {
-        let playlistLoadedCount = 0;
-        let allPlaylistSongs = new Set()
+    const getProcessedSongs = async () => {
         let response = await fetch('/api/playlistConfig');
-        const playlistConfig = await response.json();
-        const playlistsCount = Object.keys(playlistConfig).length
-        setLoadingMessage(`Fetching Songs from Playlists...(${playlistLoadedCount}/${playlistsCount})`);
-
+        const playlistConfig = await response.json()
+        setLoadingMessage(`Fetching songs from Processed playlist...`);
         props.setPlaylistConfig(playlistConfig)
-        for (const playlistName of Object.keys(playlistConfig)) {
-            playlistLoadedCount += 1
-            setLoadingMessage(`Fetching Songs from Playlists...(${playlistLoadedCount}/${playlistsCount})`);
-            const playlistSongsResponse = await fetch('/api/playlistSongs?playlistId=' + playlistConfig[playlistName])
-            const playlistSongs = await playlistSongsResponse.json()
-            playlistSongs.forEach(item => allPlaylistSongs.add(item))
-        }
-        return Array.from(allPlaylistSongs);
+        const playlistSongsResponse = await fetch('/api/playlistSongs?playlistId=' + playlistConfig["Processed"])
+        return await playlistSongsResponse.json()
     }
 
     const getAllLikedSongs = async () => {
@@ -62,12 +52,12 @@ const Loader = (props) => {
         props.setPlaylistStructure(playlistStructure)
         toastMessage(`Found ${playlistStructure.length} playlist categories`)
 
-        const allPlaylistSongs = await getAllPlaylistSongs()
-        toastMessage(`Found ${allPlaylistSongs.length} playlist songs`)
+        const processedSongs = await getProcessedSongs()
+        toastMessage(`Found ${processedSongs.length} processed songs`)
 
         setLoadingMessage("Fetching Liked Songs...");
         const likedSongs = await getAllLikedSongs();
-        const songsToProcess = likedSongs.filter(x => !allPlaylistSongs.includes(x));
+        const songsToProcess = likedSongs.filter(x => !processedSongs.includes(x));
         shuffle(songsToProcess);
         toastMessage(`Found ${songsToProcess.length} songs to process in total`)
 

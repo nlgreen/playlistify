@@ -21,7 +21,7 @@ var generateRandomString = function (length) {
 };
 
 exports.login = function(req, res){
-    var scope = "streaming user-read-email user-read-private user-read-playback-state playlist-read-private playlist-read-collaborative playlist-modify-private playlist-modify-public user-library-read user-read-currently-playing"
+    var scope = "streaming user-read-email user-read-private user-read-playback-state playlist-read-private playlist-read-collaborative playlist-modify-private playlist-modify-public user-library-read user-read-currently-playing user-library-modify"
     var state = generateRandomString(16);
 
     var auth_query_parameters = new URLSearchParams({

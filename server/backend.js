@@ -15,11 +15,20 @@ var spotify = new SpotifyWebApi({
     redirectUri: 'http://www.example.com/callback'
 });
 
+let processedPlaylist = {id: null}
+
 const playlistStructureManager = new JsonDataManager('./resources/playlist_structure.json', JsonDataManager.PLAYLIST_STRUCTURE)
 
-function init() {
+async function init() {
     if (!spotify.getAccessToken()) {
         spotify.setAccessToken(auth.bare_token.token)
+    }
+    // the advantage of the processed folder over combining songs from the individual playlist folders is that
+    // you can still add songs without using the application to individual playlists and they will be "fully"
+    // processed at a later date.
+    if (processedPlaylist.id == null) {
+        const res = await getPlaylistConfig(spotify, new Set(["Processed"]))
+        processedPlaylist.id = res["Processed"]
     }
 }
 
@@ -48,11 +57,17 @@ exports.addToPlaylist = async function(req, res) {
     const songName = await service.getSongName(spotify, songId);
     const playlistName = req.query.playlistName;
     const playlistId = req.query.playlistId;
-    const success = await service.addToPlaylist(spotify, playlistId, songId);
-    if (success) {
+    let message = await service.addToPlaylist(spotify, playlistId, playlistName, songId, false);
+    if (message === '') {
         console.log("Added " + songName + " to " + playlistName);
+    } else {
+        res.json(message);
+        return;
     }
-    res.json(success)
+    if (playlistName !== "Processed") {
+        message = await service.addToPlaylist(spotify, processedPlaylist.id, "Processed", songId, true)
+    }
+    res.json(message)
 }
 
 exports.playlistConfig = async function(req, res) {
@@ -70,6 +85,12 @@ exports.likedSongs = async function(req, res) {
     init()
     const likedSongs = await service.getLikedSongs(spotify, parseInt(req.query.offset));
     res.json(likedSongs);
+}
+
+exports.removeFromLiked = async function(req, res) {
+    init()
+    await service.removeFromLikedSongs(spotify, req.query.songId, req.query.songName)
+    res.send(true)
 }
 
 exports.playlistSongs = async function(req, res) {
