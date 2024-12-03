@@ -21,7 +21,23 @@ const playlistStructureManager = new JsonDataManager('./resources/playlist_struc
 
 async function init() {
     if (!spotify.getAccessToken()) {
+        spotify.setRefreshToken(auth.refresh_token.token)
         spotify.setAccessToken(auth.bare_token.token)
+    }
+    if (auth.shouldRefresh()) {
+        console.log("Access token needs to be refreshed.")
+        spotify.refreshAccessToken().then(
+            function(data) {
+                const token = data.body['access_token'];
+                auth.bare_token.token = token;
+                auth.expires_in.time = Math.floor(Date.now() / 1000) + data.body['expires_in'];
+                spotify.setAccessToken(token);
+                console.log('The access token has been refreshed!');
+            },
+            function(err) {
+                console.log('Could not refresh access token', err);
+            }
+        );
     }
     // the advantage of the processed folder over combining songs from the individual playlist folders is that
     // you can still add songs without using the application to individual playlists and they will be "fully"
@@ -105,3 +121,8 @@ exports.playlistStructure = async function(req, res) {
     const playlistStructure = playlistStructureManager.get();
     res.json(playlistStructure)
 }
+
+exports.tokenCache = function(req, res){
+    init()
+    res.json({ access_token: auth.bare_token.token})
+};

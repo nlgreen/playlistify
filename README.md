@@ -3,7 +3,7 @@
 
 This answer used for multi-github account setup: https://stackoverflow.com/a/9348040
 (But it's already set up, so just make sure both accounts are listed via `ssh-add -l`, and use `ssh-add <rsa_file>` to add if not. You can find the key listed
-in `~/.ssh/config`). The git config file in the repo should already have it configured:
+in `~/.ssh/config`). The git config file (`.git/config`) in the repo should already have it configured:
 ```
 [user]
         name = ...

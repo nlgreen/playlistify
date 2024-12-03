@@ -3,7 +3,7 @@ async function getAllUserPlaylists(spotify, meId, allowedPlaylists, offset = 0, 
     while (true) {
         const response = await spotify.getUserPlaylists(meId, options={offset, limit});
         response.body.items.forEach(playlist => {
-            if (allowedPlaylists.has(playlist.name)) {
+            if (playlist && allowedPlaylists.has(playlist.name)) {
                 if (playlist.name in playlists && playlist.id !== playlists[playlist.name]) {
                     throw new Error(`Can't add playlist ${playlist.name} as it is a duplicate`)
                 }

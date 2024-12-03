@@ -1,7 +1,11 @@
 const request = require('request');
 const dotenv = require('dotenv');
+const backend = require("./backend");
+
 
 global.access_token = {token: ''}
+global.refresh_token = {token: ''}
+global.expires_in = {time: ''}
 
 dotenv.config()
 
@@ -55,13 +59,22 @@ exports.callback = function(req, res){
     request.post(authOptions, function(error, response, body) {
         if (!error && response.statusCode === 200) {
             access_token.token = body.access_token;
+            refresh_token.token = body.refresh_token;
+            expires_in.time = Math.floor(Date.now() / 1000) + body.expires_in;
             res.redirect('/')
         }
     });
 };
+
+exports.shouldRefresh = function() {
+    const currentTime = Math.floor(Date.now() / 1000);
+    return currentTime + 1200 > expires_in.time; // 20 minutes before expiry
+}
 
 exports.token = function(req, res){
     res.json({ access_token: access_token.token})
 };
 
 exports.bare_token = access_token;
+exports.refresh_token = refresh_token;
+exports.expires_in = expires_in;

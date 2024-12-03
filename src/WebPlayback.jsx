@@ -70,7 +70,14 @@ function WebPlayback(props) {
 
             const player = new window.Spotify.Player({
                 name: 'Web Playback SDK',
-                getOAuthToken: cb => { cb(props.token); },
+                getOAuthToken: cb => {
+                    console.log("THE OAUTH TOKEN IS EXPIRED!")
+                    fetch('/api/tokenCache')
+                        .then(response => response.json())
+                        .then(json => {
+                            cb(json.access_token)
+                        });
+                    },
                 volume: 0.5
             });
 
