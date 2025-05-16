@@ -16,6 +16,7 @@ app.get('/auth/token', auth.token)
 app.get('/api/tokenCache', backend.tokenCache)
 app.get('/api/queue', backend.queue)
 app.get('/api/addToPlaylist', backend.addToPlaylist)
+app.get('/api/removeFromPlaylist', backend.removeFromPlaylist)
 app.get('/api/playlistConfig', backend.playlistConfig)
 app.get('/api/likedSongs', backend.likedSongs);
 app.get('/api/removeFromLiked', backend.removeFromLiked)

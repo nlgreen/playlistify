@@ -58,6 +58,17 @@ async function getPlaylistConfig(spotify, allowedPlaylists) {
     return playlists;
 }
 
+async function removeFromPlaylist(songId, playlistName, playlistId) {
+  try {
+    // Remove the song (using an array of one track object) from the playlist.
+    await spotify.removeTracksFromPlaylist(playlistId, [{ uri: "spotify:track:" + songId }]);
+    return "";
+  } catch (e) {
+    console.error("Error removing song from playlist:", e);
+    return e.message || "Error removing song from playlist.";
+  }
+}
+
 exports.queue = async function(req, res) {
     init()
     const songId = req.query.songId;
@@ -125,4 +136,14 @@ exports.playlistStructure = async function(req, res) {
 exports.tokenCache = function(req, res){
     init()
     res.json({ access_token: auth.bare_token.token})
+};
+
+exports.removeFromPlaylist = async (req, res) => {
+  const { songId, playlistName, playlistId } = req.query;
+  if (!songId || !playlistName || !playlistId) {
+    res.status(400).json("Missing required query parameters (songId, playlistName, playlistId)");
+    return;
+  }
+  const message = await removeFromPlaylist(songId, playlistName, playlistId);
+  res.json(message);
 };

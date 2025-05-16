@@ -146,7 +146,7 @@ img { background: transparent; }
   transition: background-color 0.3s ease;
   margin: 10px;
 }
-.btn-disabled:disabled {
+.btn-disabled {
   background-color: red;
   color: #fff;
   border: none;
@@ -154,9 +154,8 @@ img { background: transparent; }
   border-radius: 5px;
   font-size: 14px;
   transition: background-color 0.3s ease;
-  cursor: not-allowed;
   margin: 10px;
-
+  cursor: pointer;
 
 }
 
