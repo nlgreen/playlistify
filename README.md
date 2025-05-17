@@ -1,5 +1,7 @@
 ## Local Development and Execution
-`npm run dev` starts the React frontend on port 3000 and the express backend on port 5000.
+`npm run ...` starts the React frontend on port 3000 and the express backend on port 5000.
+Use `dev` to start with a static list of 5 songs, to be processed in dev-specific playlists
+that are automatically cleared on startup. Use `prod` for real processing.
 
 This answer used for multi-github account setup: https://stackoverflow.com/a/9348040
 (But it's already set up, so just make sure both accounts are listed via `ssh-add -l`, and use `ssh-add <rsa_file>` to add if not. You can find the key location to add listed
@@ -29,7 +31,6 @@ in the `~/.ssh/config` file). The git config file (`.git/config`) in the repo sh
 
 ### Performance
 - Better error handling
-- add dev mode that makes loading faster
 - Graceful shutdown
 
 ### Features
@@ -39,8 +40,5 @@ in the `~/.ssh/config` file). The git config file (`.git/config`) in the repo sh
 - External configuration
 - Lower left hand corner for queue
 - skip initial spotify button
-- verify that song is in playlist after adding
-- Migrate system to use a single "processed" playlist instead of sifting through all of them to determine the state
 - Song loading indicator on processed songs, like the liked songs has
-- Token refreshing
 - Add a new playlist
