@@ -46,8 +46,16 @@ async function init() {
     // processed at a later date.
     if (processedPlaylist.id == null) {
         if (REACT_APP_ENV === "dev") {
-            const res = await getPlaylistConfig(spotify, new Set(["Processed-dev"]));
+            const res = await getPlaylistConfig(spotify, new Set(["Processed-dev", "Dev1", "Dev2"]));
             processedPlaylist.id = res["Processed-dev"];
+            const devPlaylists = [
+                res["Processed-dev"],
+                res["Dev1"],
+                res["Dev2"]
+            ];
+            for (const playlistId of devPlaylists) {
+                await service.clearPlaylist(spotify, playlistId);
+            }
         } else {
             const res = await getPlaylistConfig(spotify, new Set(["Processed"]));
             processedPlaylist.id = res["Processed"];

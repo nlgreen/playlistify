@@ -93,10 +93,23 @@ async function getSongName(spotify, songId) {
     return response.body.name;
 }
 
+async function clearPlaylist(spotify, playlistId) {
+    const songs = await getAllPlaylistSongs(spotify, playlistId);
+    if (songs.length === 0) {
+        return;
+    }
+    const trackUris = songs.map(songId => ({ uri: `spotify:track:${songId}` }));
+    for (let i = 0; i < trackUris.length; i += 100) {
+        const chunk = trackUris.slice(i, i + 100);
+        await spotify.removeTracksFromPlaylist(playlistId, chunk);
+    }
+}
+
 module.exports = { getAllUserPlaylists,
     getAllPlaylistSongs,
     getLikedSongs,
     addToPlaylist,
     addToQueue,
     getSongName,
-    removeFromLikedSongs};
+    removeFromLikedSongs,
+    clearPlaylist};
