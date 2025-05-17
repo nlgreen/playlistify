@@ -21,11 +21,12 @@ const Loader = (props) => {
 
     const getProcessedSongs = async () => {
         let response = await fetch('/api/playlistConfig');
-        const playlistConfig = await response.json()
-        setLoadingMessage(`Fetching songs from Processed playlist...`);
-        props.setPlaylistConfig(playlistConfig)
-        const playlistSongsResponse = await fetch('/api/playlistSongs?playlistId=' + playlistConfig["Processed"])
-        return await playlistSongsResponse.json()
+        const playlistConfig = await response.json();
+        const playlistName = (process.env.REACT_APP_ENV === "dev") ? "Processed-dev" : "Processed";
+        setLoadingMessage(`Fetching songs from ${playlistName} playlist...`);
+        props.setPlaylistConfig(playlistConfig);
+        const playlistSongsResponse = await fetch('/api/playlistSongs?playlistId=' + playlistConfig[playlistName]);
+        return await playlistSongsResponse.json();
     }
 
     const getAllLikedSongs = async () => {

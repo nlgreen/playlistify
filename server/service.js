@@ -33,29 +33,28 @@ async function getAllPlaylistSongs(spotify, playlistId, offset= 0, limit = 50) {
     return songs;
 }
 
-async function getLikedSongs(spotify, offset = 0, limit = 200) {
-    let songs = []
-    let count = 0
-    let complete = false;
-    let total = 0;
-    while (count < limit) {
-        const response = await spotify.getMySavedTracks(options = {offset, limit: 50});
-        total = response.body.total
-        response.body.items.forEach(song => {
-            songs.push(song.track.id);
-        })
-        // for testing
-        // if (offset > 250){
-        // break; complete = true;
-        // }
-        if (!response.body.next) {
-            complete = true;
-            break;
+async function getLikedSongs(spotify, offset = 0, isDev = false, limit = 200) {
+    if (isDev) {
+        const devSongs = [ "5lTTysbUb81Cn2MJQ9m1FC", "6DLbBlGIOjjEj0dNN25zhZ", "3zyqphgXvgHe436IMKeey3", "14XWxMtz3iJ0vmy5tNebyB", "2EWnKuspetOzgfBtmaNZvJ"];
+        return { songs: devSongs, offset, complete: true, total: devSongs.length };
+    } else {
+        let songs = [];
+        let count = 0;
+        let complete = false;
+        let total = 0;
+        while (limit === undefined || count < limit) {
+            const response = await spotify.getMySavedTracks(options = { offset, limit: 50 });
+            total = response.body.total;
+            response.body.items.forEach(song => { songs.push(song.track.id); });
+            if (!response.body.next) {
+                complete = true;
+                break;
+            }
+            offset += 50;
+            count += 50;
         }
-        offset += 50;
-        count += 50;
+        return { songs, offset, complete, total };
     }
-    return {songs, offset, complete, total};
 }
 
 async function removeFromLikedSongs(spotify, songId, songName) {

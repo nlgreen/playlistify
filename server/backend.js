@@ -4,7 +4,8 @@ const SpotifyWebApi = require("spotify-web-api-node");
 const dotenv = require("dotenv");
 const JsonDataManager = require("./JsonDataManager");
 
-dotenv.config()
+dotenv.config();
+const REACT_APP_ENV = process.env.REACT_APP_ENV || "prod";
 
 var spotify_client_id = process.env.SPOTIFY_CLIENT_ID
 var spotify_client_secret = process.env.SPOTIFY_CLIENT_SECRET
@@ -17,7 +18,8 @@ var spotify = new SpotifyWebApi({
 
 let processedPlaylist = {id: null}
 
-const playlistStructureManager = new JsonDataManager('./resources/playlist_structure.json', JsonDataManager.PLAYLIST_STRUCTURE)
+const structureFile = (REACT_APP_ENV === "dev") ? './resources/playlist_structure_dev.json' : './resources/playlist_structure.json';
+const playlistStructureManager = new JsonDataManager(structureFile, JsonDataManager.PLAYLIST_STRUCTURE)
 
 async function init() {
     if (!spotify.getAccessToken()) {
@@ -43,8 +45,13 @@ async function init() {
     // you can still add songs without using the application to individual playlists and they will be "fully"
     // processed at a later date.
     if (processedPlaylist.id == null) {
-        const res = await getPlaylistConfig(spotify, new Set(["Processed"]))
-        processedPlaylist.id = res["Processed"]
+        if (REACT_APP_ENV === "dev") {
+            const res = await getPlaylistConfig(spotify, new Set(["Processed-dev"]));
+            processedPlaylist.id = res["Processed-dev"];
+        } else {
+            const res = await getPlaylistConfig(spotify, new Set(["Processed"]));
+            processedPlaylist.id = res["Processed"];
+        }
     }
 }
 
@@ -91,8 +98,9 @@ exports.addToPlaylist = async function(req, res) {
         res.json(message);
         return;
     }
-    if (playlistName !== "Processed") {
-        message = await service.addToPlaylist(spotify, processedPlaylist.id, "Processed", songId, true)
+    if (playlistName !== "Processed" && playlistName !== "Processed-dev") {
+        const processedPlaylistName = (REACT_APP_ENV === "dev") ? "Processed-dev" : "Processed";
+        message = await service.addToPlaylist(spotify, processedPlaylist.id, processedPlaylistName, songId, true)
     }
     res.json(message)
 }
@@ -109,8 +117,9 @@ exports.playlistConfig = async function(req, res) {
 }
 
 exports.likedSongs = async function(req, res) {
-    init()
-    const likedSongs = await service.getLikedSongs(spotify, parseInt(req.query.offset));
+    init();
+    const isDev = (REACT_APP_ENV === "dev");
+    const likedSongs = await service.getLikedSongs(spotify, parseInt(req.query.offset), isDev);
     res.json(likedSongs);
 }
 

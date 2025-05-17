@@ -19,7 +19,8 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "server": "node server",
-    "dev": "run-p server start"
+    "dev": "REACT_APP_ENV=dev run-p server start",
+    "prod": "REACT_APP_ENV=prod run-p server start"
   },
   "browserslist": {
     "production": [

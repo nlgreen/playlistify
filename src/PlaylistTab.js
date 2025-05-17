@@ -20,18 +20,16 @@ function PlaylistTab(props) {
 
     const addToPlaylist = async (playlistName) => {
         if (usedPlaylists.includes(playlistName)) {
-            // remove song from playlist (call backend endpoint)
             const message = await removeFromPlaylistBackendAPI(playlistName);
             if (message !== '') {
                 const song = currentTrackRef.current.name;
                 toast.error(`Did not remove ${song} from ${playlistName}: ${message}`, { position: "top-right", autoClose: 5000, hideProgressBar: true, closeOnClick: true, pauseOnHover: true, draggable: true, progress: undefined, theme: "dark" });
             } else {
-                // remove playlist from usedPlaylists (copy array to force re-render)
                 const newUsedPlaylists = usedPlaylists.filter(p => p !== playlistName);
                 setUsedPlaylists(newUsedPlaylists);
             }
         } else {
-            // add song to playlist (as before)
+            // have to copy the array to force a new reference so that child will rerender
             const newUsedPlaylists = [...usedPlaylists, playlistName];
             setUsedPlaylists(newUsedPlaylists);
             const message = await addToPlaylistBackendAPI(playlistName);
