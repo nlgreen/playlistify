@@ -1,8 +1,8 @@
 [
 	{ "name": "Positive Energy", "playlists": ["Bumpy", "Dance Free", "Go Hard", "Happy", "House-Electric Party", "Pop (Boy)", "Pop (Gen)", "Pop (Girl)", "Singalong", "Summer", "Vibe"] },
 	{ "name": "Instrumentation", "playlists": ["Brass", "Instrumental", "Whistle"] },
-	{ "name": "Genre", "playlists": ["Afrobeats", "Alternative", "Chillax (Electric)", "Country", "Folky", "Funky", "Hip Hop", "Hipster", "House-Electric Party", "Jazz", "Light Rap", "Modern Band","Old School","Pop (Boy)", "Pop (Gen)", "Pop (Girl)", "RnB Style", "Rap", "Rock (Misc)"] },
-	{ "name": "Activity", "playlists": ["Biking", "Dance Free", "Go Hard", "Not Love", "Pump Up", "Road Trip", "Singalong"] },
+    { "name": "Genre", "playlists": ["Afrobeats", "Alternative", "Boom bap", "Chillax (Electric)", "Country", "Folky", "Funky", "Hip Hop", "Hipster", "House-Electric Party", "Hyperpop?", "Jazz", "Light Rap", "Modern Band","Old School","Pop (Boy)", "Pop (Gen)", "Pop (Girl)", "RnB Style", "Rap", "Rock (Misc)", "Soul"] },
+	{ "name": "Activity", "playlists": ["Biking", "Cruise", "Dance Free", "Go Hard", "Not Love", "Pump Up", "Road Trip", "Singalong"] },
 	{ "name": "Composition", "playlists": ["Build Up", "Duet", "Foreign"] },
 	{ "name": "Lowkey", "playlists": ["Chillax (Quiet)", "Chillax (Relax)", "Feel It", "Folky", "Jazz", "Pensive"] },
 	{ "name": "Misc", "playlists": ["Download", "Favorites", "Processed"] }

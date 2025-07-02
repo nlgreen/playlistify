@@ -61,6 +61,24 @@ async function init() {
             processedPlaylist.id = res["Processed"];
         }
     }
+    // await printInvestigatePlaylistTracksMetadata(spotify)
+}
+
+// for debugging duplicate songs...
+async function printInvestigatePlaylistTracksMetadata(spotifyApi) {
+    const playlists = await spotifyApi.getUserPlaylists();
+    const investigatePlaylist = playlists.body.items.find(
+        (pl) => pl.name.toLowerCase() === 'investigate'
+    );
+
+    const tracksData = await spotifyApi.getPlaylistTracks(investigatePlaylist.id);
+    const trackIds = tracksData.body.items.map(item => item.track.id);
+
+    const metadata = await spotifyApi.getTracks(trackIds);
+
+    metadata.body.tracks.forEach(track => {
+        console.log(track);
+    });
 }
 
 async function getPlaylistConfig(spotify, allowedPlaylists) {
