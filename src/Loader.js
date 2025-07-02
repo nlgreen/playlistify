@@ -66,7 +66,7 @@ const Loader = (props) => {
                         const titleArtistMatch = processedSongs.some(processedSong => 
                 processedSong.name === likedSong.name && processedSong.artist === likedSong.artist
             );
-            return !idMatch && !titleArtistMatch;
+            return !(idMatch || titleArtistMatch);
         });
         
         shuffle(songsToProcess);
