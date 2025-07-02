@@ -22,8 +22,12 @@ async function getAllPlaylistSongs(spotify, playlistId, offset= 0, limit = 50) {
     let songs = [];
     while (true) {
         const response = await spotify.getPlaylistTracks(playlistId, options={offset, limit});
-        response.body.items.forEach(song => {
-            songs.push(song.track.id);
+        response.body.items.forEach(item => {
+            songs.push({
+                id: item.track.id,
+                name: item.track.name,
+                artist: item.track.artists[0].name
+            });
         })
         if (!response.body.next) {
             break;
@@ -35,7 +39,15 @@ async function getAllPlaylistSongs(spotify, playlistId, offset= 0, limit = 50) {
 
 async function getLikedSongs(spotify, offset = 0, isDev = false, limit = 200) {
     if (isDev) {
-        const devSongs = [ "5lTTysbUb81Cn2MJQ9m1FC", "6DLbBlGIOjjEj0dNN25zhZ", "3zyqphgXvgHe436IMKeey3", "14XWxMtz3iJ0vmy5tNebyB", "2EWnKuspetOzgfBtmaNZvJ"];
+        // https://open.spotify.com/track/5lTTysbUb81Cn2MJQ9m1FC
+        const devSongIds = [ "5lTTysbUb81Cn2MJQ9m1FC", "6DLbBlGIOjjEj0dNN25zhZ", "3zyqphgXvgHe436IMKeey3", "14XWxMtz3iJ0vmy5tNebyB", "2EWnKuspetOzgfBtmaNZvJ"];
+        // For dev mode, we need to fetch the actual track details to get names and artists
+        const tracksResponse = await spotify.getTracks(devSongIds);
+        const devSongs = tracksResponse.body.tracks.map(track => ({
+            id: track.id,
+            name: track.name,
+            artist: track.artists[0].name
+        }));
         return { songs: devSongs, offset, complete: true, total: devSongs.length };
     } else {
         let songs = [];
@@ -45,7 +57,13 @@ async function getLikedSongs(spotify, offset = 0, isDev = false, limit = 200) {
         while (limit === undefined || count < limit) {
             const response = await spotify.getMySavedTracks(options = { offset, limit: 50 });
             total = response.body.total;
-            response.body.items.forEach(song => { songs.push(song.track.id); });
+            response.body.items.forEach(item => {
+                songs.push({
+                    id: item.track.id,
+                    name: item.track.name,
+                    artist: item.track.artists[0].name
+                });
+            });
             if (!response.body.next) {
                 complete = true;
                 break;
@@ -65,7 +83,8 @@ async function removeFromLikedSongs(spotify, songId, songName) {
 async function addToPlaylist(spotify, playlistId, playlistName, songId, allowDuplicates) {
     const songUri = `spotify:track:${songId}`
     let playlistSongs = await getAllPlaylistSongs(spotify, playlistId);
-    if (playlistSongs.includes(songId)) {
+    const songExists = playlistSongs.some(song => song.id === songId);
+    if (songExists) {
         if (!allowDuplicates) {
             return "Playlist " + playlistName + " already has song!";
         }
@@ -73,10 +92,11 @@ async function addToPlaylist(spotify, playlistId, playlistName, songId, allowDup
     }
     await spotify.addTracksToPlaylist(playlistId, [songUri])
     playlistSongs = await getAllPlaylistSongs(spotify, playlistId);
-    if (!playlistSongs.includes(songId)) {
+    const songAdded = playlistSongs.some(song => song.id === songId);
+    if (!songAdded) {
         return "Song was not successfully added to " + playlistName;
     }
-    return "";
+    return ""
 }
 
 async function addToQueue(spotify, songId) {
@@ -98,7 +118,7 @@ async function clearPlaylist(spotify, playlistId) {
     if (songs.length === 0) {
         return;
     }
-    const trackUris = songs.map(songId => ({ uri: `spotify:track:${songId}` }));
+    const trackUris = songs.map(song => ({ uri: `spotify:track:${song.id}` }));
     for (let i = 0; i < trackUris.length; i += 100) {
         const chunk = trackUris.slice(i, i + 100);
         await spotify.removeTracksFromPlaylist(playlistId, chunk);

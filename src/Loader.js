@@ -58,11 +58,23 @@ const Loader = (props) => {
 
         setLoadingMessage("Fetching Liked Songs...");
         const likedSongs = await getAllLikedSongs();
-        const songsToProcess = likedSongs.filter(x => !processedSongs.includes(x));
+        
+        setLoadingMessage("Filtering...");
+        // Filter out songs that match by ID or by exact title + artist combination
+        const songsToProcess = likedSongs.filter(likedSong => {
+            const idMatch = processedSongs.some(processedSong => processedSong.id === likedSong.id);
+                        const titleArtistMatch = processedSongs.some(processedSong => 
+                processedSong.name === likedSong.name && processedSong.artist === likedSong.artist
+            );
+            return !idMatch && !titleArtistMatch;
+        });
+        
         shuffle(songsToProcess);
         toastMessage(`Found ${songsToProcess.length} songs to process in total`)
 
-        props.setSongsToPlay(songsToProcess)
+        // Extract just the IDs for compatibility with the rest of the application
+        const songIdsToPlay = songsToProcess.map(song => song.id);
+        props.setSongsToPlay(songIdsToPlay)
         props.setState("READY");
     };
     const loader = <ThreeCircles
