@@ -15,6 +15,8 @@ in the `~/.ssh/config` file). The git config file (`.git/config`) in the repo sh
         fetch = +refs/heads/*:refs/remotes/origin/*
 ```
 
+If you are trying to set up a new repository, use `git clone git@github.com-personal:nlgreen/<repo>.git`
+
 ## To Do
 ### Queue (Not supported by spotify api)
 - see if the web api has a queue remove function it uses from browser
