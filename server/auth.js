@@ -12,8 +12,7 @@ dotenv.config()
 var spotify_client_id = process.env.SPOTIFY_CLIENT_ID
 var spotify_client_secret = process.env.SPOTIFY_CLIENT_SECRET
 
-var spotify_redirect_uri = 'http://localhost:3000/auth/callback'
-
+var spotify_redirect_uri = 'http://127.0.0.1:3000/auth/callback'
 var generateRandomString = function (length) {
     var text = '';
     var possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
