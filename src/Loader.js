@@ -47,6 +47,26 @@ const Loader = (props) => {
         return likedSongs;
     }
 
+    const isSubsetMatch = (str1, str2) => {
+        if (!str1 || !str2) return false;
+        const normalized1 = str1.toLowerCase().trim();
+        const normalized2 = str2.toLowerCase().trim();
+        return normalized1.includes(normalized2) || normalized2.includes(normalized1);
+    };
+
+    const isSongMatch = (likedSong, processedSong) => {
+        // Check if song ID matches
+        if (likedSong.id === processedSong.id) {
+            return true;
+        }
+        
+        // Check if name and artist match using subset logic
+        const nameMatch = isSubsetMatch(likedSong.name, processedSong.name);
+        const artistMatch = isSubsetMatch(likedSong.artist, processedSong.artist);
+        
+        return nameMatch && artistMatch;
+    };
+
     const handleClick = async () => {
         const playlistStructureResponse = await fetch('/api/playlistStructure')
         const playlistStructure = await playlistStructureResponse.json()
@@ -60,15 +80,11 @@ const Loader = (props) => {
         const likedSongs = await getAllLikedSongs();
         
         setLoadingMessage("Filtering...");
-        // Filter out songs that match by ID or by exact title + artist combination
+        // Filter out songs that match by ID or by flexible name + artist combination
         const songsToProcess = likedSongs.filter(likedSong => {
-            const idMatch = processedSongs.some(processedSong => processedSong.id === likedSong.id);
-                        const titleArtistMatch = processedSongs.some(processedSong => 
-                processedSong.name === likedSong.name && processedSong.artist === likedSong.artist
-            );
-            return !(idMatch || titleArtistMatch);
+            return !processedSongs.some(processedSong => isSongMatch(likedSong, processedSong));
         });
-        
+
         shuffle(songsToProcess);
         toastMessage(`Found ${songsToProcess.length} songs to process in total`)
 

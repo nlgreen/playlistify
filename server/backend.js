@@ -118,8 +118,11 @@ exports.addToPlaylist = async function(req, res) {
     const playlistName = req.query.playlistName;
     const playlistId = req.query.playlistId;
     let message = await service.addToPlaylist(spotify, playlistId, playlistName, songId, false);
-    if (message === '') {
-        console.log("Added " + songName + " to " + playlistName);
+    const originalMessage = message;
+    const alreadyHasSong = message && message.includes("already has song");
+
+    if (message === '' || alreadyHasSong) {
+        console.log("Added " + songName + " to " + playlistName + (alreadyHasSong ? " (already existed)" : ""));
     } else {
         res.json(message);
         return;
@@ -127,8 +130,10 @@ exports.addToPlaylist = async function(req, res) {
     if (playlistName !== "Processed" && playlistName !== "Processed-dev") {
         const processedPlaylistName = (REACT_APP_ENV === "dev") ? "Processed-dev" : "Processed";
         message = await service.addToPlaylist(spotify, processedPlaylist.id, processedPlaylistName, songId, true)
+        console.log("Attempted to add to processed playlist, result was: " + message)
     }
-    res.json(message)
+    // Return original if needed
+    res.json(alreadyHasSong ? originalMessage : message);
 }
 
 exports.playlistConfig = async function(req, res) {
